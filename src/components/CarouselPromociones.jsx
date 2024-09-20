@@ -364,26 +364,59 @@ export default function CarouselPromociones() {
 
   const discountedCards = cardsData.filter((card) => card.discount > 0);
 
+  const scrollContainer = useRef(null);
+  let scrollInterval = null;
+
+  const handleMouseMove = (e) => {
+    const container = scrollContainer.current;
+    const { left, right } = container.getBoundingClientRect();
+
+    if (e.clientX < left + 50) {
+      startScrolling(-5);
+    } else if (e.clientX > right - 50) {
+      startScrolling(5);
+    } else {
+      stopScrolling();
+    }
+  };
+
+  const startScrolling = (speed) => {
+    if (!scrollInterval) {
+      scrollInterval = setInterval(() => {
+        scrollContainer.current.scrollLeft += speed;
+      }, 20);
+    }
+  };
+
+  const stopScrolling = () => {
+    clearInterval(scrollInterval);
+    scrollInterval = null;
+  };
+
+  useEffect(() => {
+    const container = scrollContainer.current;
+    container.addEventListener('mousemove', handleMouseMove);
+    container.addEventListener('mouseleave', stopScrolling);
+  }, []);
+
   return (
-    <section className="w-full">
-      <div className="w-full rounded-t-lg bg-neutral-900 p-4 my-4">
-        <h3 className="text-2xl font-bold text-amber-500">Promociones</h3>
-      </div>
-      <div className="flex flex-wrap overflow-x-scroll scrolling-touch items-start mb-8 gap-4">
-        {discountedCards.map((data) => {
-          return (
-            <Cards
-              key={`card-${data.item}`}
-              photo={data.photo}
-              item={data.item}
-              discount={data.discount}
-              subsidiary={data.subsidiary}
-              newprice={data.newprice}
-              price={data.pice}
-            />
-          );
-        })}
-      </div>
-    </section>
+    <div
+      ref={scrollContainer}
+      className="flex flex-row w-full gap-2 overflow-x-auto scrollbar-hide"
+    >
+      {discountedCards.map((data) => {
+        return (
+          <Cards
+            key={`card-${data.item}`}
+            photo={data.photo}
+            item={data.item}
+            discount={data.discount}
+            subsidiary={data.subsidiary}
+            newprice={data.newprice}
+            price={data.pice}
+          />
+        );
+      })}
+    </div>
   );
 }

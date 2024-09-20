@@ -11,7 +11,7 @@ export default function HomePage() {
     <main className="w-full h-dvh flex flex-col items-center gap-0">
       <NavBar />
       <LocalizadorSucursal />
-      <div className="flex-grow mb-4 mx-8">
+      <div className="flex-grow w-full pb-4 px-8 mb-4 mx-8">
         <BannerYPromos />
       </div>
 
